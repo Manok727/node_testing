@@ -128,21 +128,23 @@ app.post('/index_login', function (req, res) {
 })
 
 
-app.get('/home_user', function (req, res) {
+app.get('/home_user', function (req, res) { 
     session=req.session;
     if(session.userid){
 
-        var sql = 'SELECT * FROM innlegg WHERE idinnlegg = ? AND text = ?';
-
-        res.render('home_user', {
-            userid: session.userid
-
-
+    var sql = 'SELECT * FROM innlegg WHERE bruker = ?';
+    conn.query(sql, [session.userid], (error, result)=>{
+        if(error){
+            res.status(500).send('internal server error');
+        } else {
+            res.render('home_user.ejs', {
+            userid: session.userid,
+            data: result
         });
-    }
-    else {
-        res.render('index_login.ejs',{
-        });
+        }
+    });
+
+        
     }
 })
 
